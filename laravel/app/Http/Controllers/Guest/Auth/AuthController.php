@@ -161,12 +161,13 @@ class AuthController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         } else {
+            $credentials = $request->only('email', 'password');
+
             $user = User::where('email', $request['email'])->first();
 
             if ($user) {
-                $credentials = $request->only('email', 'password');
-
-                if (Auth::attempt($credentials)) {
+               
+                if (Auth::guard('web')->attempt($credentials)) {
                     return redirect( route('dashboard-user', app()->getLocale()) );
                 } else {
                     if (app()->getLocale() == 'zh-tw') {
@@ -186,7 +187,6 @@ class AuthController extends Controller
             $admin = Admin::where('email', $request['email'])->first();
             
             if ($admin) {
-                $credentials = $request->only('email', 'password');
 
                 if (Auth::guard('admin')->attempt($credentials)) {
                     return redirect( route('dashboard-admin', app()->getLocale()) );

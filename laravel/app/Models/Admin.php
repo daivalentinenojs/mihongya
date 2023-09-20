@@ -62,4 +62,9 @@ class Admin extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id', 'uuid');
     }
+
+    public function isAdmin()
+    {
+        return true;
+    }
 }

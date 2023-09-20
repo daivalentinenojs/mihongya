@@ -56,4 +56,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_validation_at' => 'datetime',
     ];
+
+    public function isAdmin()
+    {
+        return false;
+    }
 }

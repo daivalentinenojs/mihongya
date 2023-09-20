@@ -29,16 +29,22 @@ use App\Http\Controllers\User\User\UserController;
 Route::redirect('/', 'en');
 
 Route::group(['prefix' => '{language}'], function() {
-    // Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
-    // });
+    Route::group(['prefix' => 'user', 'middleware' => 'user'], function () {
+        // Dashboard
+        Route::get('/', [DashboardController::class, 'IndexDashboardUser'])->name('dashboard-user');
 
-    Route::group(['prefix' => 'admin'], function () {
+        // Profile
+        Route::get('profile-user', [ProfileController::class, 'IndexProfileUser'])->name('profile-user');
+        Route::post('profile-user', [ProfileController::class, 'IndexEditProfileUser'])->name('edit-profile-user'); 
+    });
+    
+    Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
         // Dashboard
         Route::get('/', [DashboardController::class, 'IndexDashboardAdmin'])->name('dashboard-admin');
 
         // Profile
-        Route::get('profile', [ProfileController::class, 'IndexProfileAdmin'])->name('profile-admin');
-        Route::post('profile', [ProfileController::class, 'IndexEditProfileAdmin'])->name('edit-profile-admin'); 
+        Route::get('profile-admin', [ProfileController::class, 'IndexProfileAdmin'])->name('profile-admin');
+        Route::post('profile-admin', [ProfileController::class, 'IndexEditProfileAdmin'])->name('edit-profile-admin'); 
 
         Route::group(['prefix' => 'master-data'], function () {
             Route::get('user', [UserController::class, 'IndexGetUsers'])->name('get-users');
@@ -47,15 +53,6 @@ Route::group(['prefix' => '{language}'], function() {
             Route::post('user/{id}', [UserController::class, 'IndexPutUser'])->name('put-user');
             Route::delete('user/{id}', [UserController::class, 'IndexDeleteUser'])->name('delete-user');
         });
-    });
-
-    Route::group(['prefix' => 'user'], function () {
-          // Dashboard
-          Route::get('/', [DashboardController::class, 'IndexDashboardUser'])->name('dashboard-user');
-
-          // Profile
-          Route::get('profile', [ProfileController::class, 'IndexProfileUser'])->name('profile-user');
-          Route::post('profile', [ProfileController::class, 'IndexEditProfileUser'])->name('edit-profile-user'); 
     });
 
     Route::group(['prefix' => ''], function () {
