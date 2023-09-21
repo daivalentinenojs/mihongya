@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {   
@@ -35,6 +36,7 @@ class AuthController extends Controller
 
     public function IndexLogOut()
     {
+        Session::forget('user_email');
         Auth::logout();
         return redirect(route('login', app()->getLocale()) )->withStatus([
             'alert' => 'alert-success',
@@ -163,11 +165,12 @@ class AuthController extends Controller
         } else {
             $credentials = $request->only('email', 'password');
 
-            $user = User::where('email', $request['email'])->first();
+            $user = User::where('email', $request['email'])->whereNull('deleted_at')->first();
 
             if ($user) {
                
                 if (Auth::guard('web')->attempt($credentials)) {
+                    Session::put('user_email', $user->email);
                     return redirect( route('dashboard-user', app()->getLocale()) );
                 } else {
                     if (app()->getLocale() == 'zh-tw') {
@@ -184,11 +187,12 @@ class AuthController extends Controller
                 }
             }
             
-            $admin = Admin::where('email', $request['email'])->first();
+            $admin = Admin::where('email', $request['email'])->whereNull('deleted_at')->first();
             
             if ($admin) {
 
                 if (Auth::guard('admin')->attempt($credentials)) {
+                    Session::put('user_email', $admin->email);
                     return redirect( route('dashboard-admin', app()->getLocale()) );
                 } else {
                     if (app()->getLocale() == 'zh-tw') {
